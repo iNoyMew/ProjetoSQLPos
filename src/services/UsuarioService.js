@@ -13,20 +13,19 @@ const UsuarioService = {
         }
 
         const senhaHash = await bcrypt.hash(senha, 10);
+        const nascimentoDate = moment(nascimento, 'DD/MM/YYYY', true);
 
         const usuario = await Usuario.create({
             nome, 
             email, 
             senha: senhaHash,
-            nascimento
+            nascimento: nascimentoDate.toDate() //YYYY-MM-DD format
         });
-
-        const nascimentoDate = moment(usuario.nascimento, 'YYYY-MM-DD');
 
         const returnUsuario = {
             nome: usuario.nome,
             email: usuario.email,
-            nascimento: nascimentoDate.format('DD-MM-YYYY')
+            nascimento: nascimentoDate.format('DD/MM/YYYY')
         }
 
         return returnUsuario;
