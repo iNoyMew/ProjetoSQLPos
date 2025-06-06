@@ -4,7 +4,7 @@ const UsuarioController = {
     async cadastrar(req, res) {
         try {
             const resultado = await UsuarioService.cadastrar(req.body);
-            res.status(200).json(resultado);
+            res.status(201).json(resultado);
         } catch (error) {
             res.status(500).json({ mensagem: error.message });
         }
