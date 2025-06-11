@@ -1,19 +1,84 @@
 const Curso = require('../models/Curso');
+const { Op }  = require('sequelize');
+const Inscricao = require('../models/Inscricao');
+const sequelize = require('../../config/database');
 
 const CursoService = {
-    async listarCursos() {
-        /* Equivalente: SELECT * FROM cursos */
-        const cursos = await Curso.findAll();
+    async listarCursos(usuarioId, filtro) {
+        const whereClause = filtro ? {
+            [Op.or]: [
+                {nome: {[Op.like]: `%${filtro}%`}},
+                {descricao: {[Op.like]: `%${filtro}%`}}
+            ]
+        } : {};
+
+        const cursos = await Curso.findAll({
+            where: whereClause,
+            include: [
+                {
+                    model: Inscricao,
+                    attributes: []
+                }
+            ],
+            attributes: {
+                include:[
+                    [
+                        sequelize.literal('(SELECT COUNT(*) FROM inscricoes WHERE inscricoes.curso_id = Curso.id)'), 
+                        'total_inscricoes'
+                    ],
+                    [
+                        sequelize.literal(`(SELECT COUNT(*) FROM inscricoes WHERE inscricoes.curso_id = Curso.id AND inscricoes.usuario_id = ${usuarioId})`),
+                        'usuario_inscrito'
+                    ]
+                ]
+            }
+        });
 
         return cursos.map(curso => ({
             id: curso.id,
             nome: curso.nome,
             descricao: curso.descricao,
             capa: curso.capa,
-            inscricoes: 0, //implementar contagem de inscricoes
+            inscricoes: curso.getDataValue('total_inscricoes'),
             inicio: new Date(curso.inicio).toLocaleDateString('pt-BR'),
-            inscrito: false //implementar informação se o usuario logado está inscrito neste curso
+            inscrito: curso.getDataValue('usuario_inscrito') > 0
         }));
+    },
+
+    async listarCursosInscritos(usuarioId) {
+        const cursos = await Curso.findAll({
+            include:[{
+                model: Inscricao,
+                as: 'inscricoes',
+                where: {
+                    usuario_id: usuarioId
+                },
+                required: true
+            }],
+            attributes: {
+                include: [
+                    [
+                        sequelize.literal('(SELECT COUNT(*) FROM inscricoes WHERE inscricoes.curso_id = Curso.id)'),
+                        'total_inscricoes'
+                    ],
+                    [
+                        sequelize.literal('(inscricoes.data_cancelamento IS NOT NULL)'),
+                        'inscricao_cancelada'
+                    ]
+                ]
+            }
+        });
+
+        return cursos.map(curso => ({
+            id: curso.id,
+            nome: curso.nome,
+            descricao: curso.descricao,
+            capa: curso.capa,
+            inscricoes: curso.getDataValue('total_inscricoes'),
+            inicio: new Date(curso.inicio).toLocaleDateString('pt-br'),
+            inscricao_cancelada: curso.getDataValue('inscricao_cancelada'),
+            inscrito: true
+        }))
     }
 }
 

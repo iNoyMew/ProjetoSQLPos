@@ -7,9 +7,9 @@ const InscricaoController = {
             const cursoId = req.params.idCurso;
 
             await InscricaoService.inscrever(usuarioId, cursoId);
-            res.status(201).json({ mensagem: 'Inscricão realizada com sucesso'});
+            res.status(200).json({ mensagem: 'Inscricão realizada com sucesso'});
         } catch (error) {
-            res.status(500).json({ mensagem: error.message });
+            res.status(400).json({ mensagem: error.message });
 
         }
     }, 
@@ -23,7 +23,7 @@ const InscricaoController = {
             await InscricaoService.cancelar(usuarioId, cursoId);
             res.status(200).json({mensagem: 'Inscrição cancelada com sucesso!'});
         } catch (error) {
-            res.status(500).json({ mensagem: error.message });
+            res.status(400).json({ mensagem: error.message });
         }
     }
 
