@@ -9,7 +9,7 @@ const InscricaoController = {
             await InscricaoService.inscrever(usuarioId, cursoId);
             res.status(200).json({ mensagem: 'Inscricão realizada com sucesso'});
         } catch (error) {
-            res.status(400).json({ mensagem: error.message });
+            res.status(error.status || 400).json({ message: error.mensagem});
 
         }
     }, 
@@ -23,7 +23,7 @@ const InscricaoController = {
             await InscricaoService.cancelar(usuarioId, cursoId);
             res.status(200).json({mensagem: 'Inscrição cancelada com sucesso!'});
         } catch (error) {
-            res.status(400).json({ mensagem: error.message });
+            res.status(error.status || 400).json({ mensagem: error.mensagem});
         }
     }
 

@@ -22,6 +22,11 @@ const UsuarioController = {
     async login(req, res){ 
         try {
             const token = await UsuarioService.login(req.body);
+
+            res.cookie('token', token, {
+                httpOnly: true,
+            });
+
             res.status(200).json(token);
         } catch (error) {
             res.status(500).json({ mensagem: error.message });

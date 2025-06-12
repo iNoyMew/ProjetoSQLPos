@@ -49,7 +49,6 @@ const CursoService = {
         const cursos = await Curso.findAll({
             include:[{
                 model: Inscricao,
-                as: 'inscricoes',
                 where: {
                     usuario_id: usuarioId
                 },
@@ -62,7 +61,7 @@ const CursoService = {
                         'total_inscricoes'
                     ],
                     [
-                        sequelize.literal('(inscricoes.data_cancelamento IS NOT NULL)'),
+                        sequelize.literal('(Inscricaos.data_cancelamento IS NOT NULL)'),
                         'inscricao_cancelada'
                     ]
                 ]
@@ -76,7 +75,7 @@ const CursoService = {
             capa: curso.capa,
             inscricoes: curso.getDataValue('total_inscricoes'),
             inicio: new Date(curso.inicio).toLocaleDateString('pt-br'),
-            inscricao_cancelada: curso.getDataValue('inscricao_cancelada'),
+            inscricao_cancelada: curso.getDataValue('inscricao_cancelada') > 0,
             inscrito: true
         }))
     }
