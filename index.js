@@ -6,6 +6,7 @@ const AuthRoutes = require('./src/routes/AuthRoutes');
 const RootRoutes = require('./src/routes/RootRoutes');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
+const path = require('path');
 
 require('dotenv').config();
 
@@ -19,6 +20,9 @@ app.use(cors({
 
 app.use(express.json());
 app.use(cookieParser());
+
+// Serve static files from src/images directory
+app.use('/images', express.static(path.join(__dirname, 'src/images')));
 
 app.use('/cursos', CursoRoutes);
 app.use('/usuarios', UsuarioRoutes);
