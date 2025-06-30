@@ -7,6 +7,7 @@ const RootRoutes = require('./src/routes/RootRoutes');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const path = require('path');
+require('dotenv').config();
 
 require('dotenv').config();
 
@@ -31,5 +32,5 @@ app.use('/', RootRoutes);
 
 sequelize.sync().then(() => {
     console.log("Banco de dados sincronizado com sucesso!");
-    app.listen(3000, ()=> console.log("Servidor rodando na porta 3000"));
+    app.listen(3000, ()=> console.log("Servidor rodando na porta " + process.env.PORT));
 }).catch(err => console.error("Erro ao conectar com banco de dados", err));

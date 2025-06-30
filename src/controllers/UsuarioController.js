@@ -31,6 +31,16 @@ const UsuarioController = {
         } catch (error) {
             res.status(500).json({ mensagem: error.message });
         }
+    },
+
+    async buscarPerfil(req, res) {
+        try {
+            const usuarioId = req.user.id;
+            const perfil = await UsuarioService.buscarPerfil(usuarioId);
+            res.status(200).json(perfil);
+        } catch (error) {
+            res.status(500).json({ mensagem: error.message });
+        }
     }
 }
 

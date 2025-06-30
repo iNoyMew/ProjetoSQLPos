@@ -61,8 +61,24 @@ const UsuarioService = {
         );
 
         return token;        
+    },
+
+    async buscarPerfil(usuarioId) {
+        const usuario = await Usuario.findByPk(usuarioId);
+        if (!usuario) {
+            throw new Error('Usuário não encontrado');
+        }
+
+        // Formatar a data de nascimento para DD/MM/YYYY
+        const nascimentoFormatado = moment(usuario.nascimento).format('DD/MM/YYYY');
+
+        return {
+            id: usuario.id,
+            nome: usuario.nome,
+            email: usuario.email,
+            nascimento: nascimentoFormatado
+        };
     }
 }
-
 
 module.exports = UsuarioService;
